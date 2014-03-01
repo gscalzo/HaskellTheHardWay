@@ -27,9 +27,14 @@ playGame = do
 	putStrLn "Try again? (yes or no)"
 	word <- getLine
 	if word == "no"
-		then return []
+		then return ""
 	else do
-		rest <- playGame
-		return []
+		money <- playHand 100
+		return money
 
+playHand money = do
+	putStrLn $ show money
+	putStrLn "What is your bet?"
+	bet <- getLine
+	return bet	
 
