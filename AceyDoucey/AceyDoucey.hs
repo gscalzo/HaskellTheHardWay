@@ -2,7 +2,8 @@
 -- Copyright (c) 2014 Giordano Scalzo  
 -- The MIT License (MIT)
 -- 
-import System.Environment
+import Control.Monad
+
 intro = ["Acey Ducey Card Game",
 	    "Adapted from a BASIC game from Creative Computing - Morristown, New Jersey.",
 	    "",
@@ -18,6 +19,17 @@ intro = ["Acey Ducey Card Game",
 main :: IO ()
 main = do
     mapM_ putStrLn intro
+    res <- playGame
+    putStrLn res
 
+
+playGame = do
+	putStrLn "Try again? (yes or no)"
+	word <- getLine
+	if word == "no"
+		then return []
+	else do
+		rest <- playGame
+		return []
 
 
