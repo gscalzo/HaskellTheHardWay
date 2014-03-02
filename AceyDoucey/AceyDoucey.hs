@@ -36,5 +36,13 @@ playHand money = do
 	putStrLn $ show money
 	putStrLn "What is your bet?"
 	bet <- getLine
+	if validBet (read bet) money
+		then putStrLn "Valid"
+		else putStrLn "Invalid"
 	return bet	
 
+
+validBet :: Int -> Int -> Bool
+validBet bet money = if bet > 0 && bet < money
+						then True
+						else False
