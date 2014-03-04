@@ -30,19 +30,21 @@ playGame = do
 		then return ""
 	else do
 		money <- playHand 100
-		return money
+		return $ show money
 
 playHand money = do
 	putStrLn $ show money
 	putStrLn "What is your bet?"
 	bet <- getLine
-	if validBet (read bet) money
-		then putStrLn "Valid"
-		else putStrLn "Invalid"
-	return bet	
+	let (valid, prompt) = validBet (read bet) money
+	if valid
+		then putStrLn prompt
+		else putStrLn prompt
+	let result = money - read (bet)
+	return result
 
-
-validBet :: Int -> Int -> Bool
-validBet bet money = if bet > 0 && bet < money
-						then True
-						else False
+validBet :: Int -> Int -> (Bool, [Char])
+validBet bet money 
+		| bet == 0 = (False, "Chicken")
+		| bet > money = (False, "Sorry, my friend but you have bet to much.\n" ++ "You have only " ++ show (bet) ++ " dollars to bet.")
+	 	| otherwise = (True, "Go for it, dude!")
