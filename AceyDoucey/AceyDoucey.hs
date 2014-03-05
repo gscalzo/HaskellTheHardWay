@@ -5,6 +5,54 @@
 import Control.Monad
 import System.Random 
 
+
+main :: IO ()
+main = do
+    mapM_ putStrLn intro
+    res <- playGame
+    putStrLn res
+
+
+playGame = do
+	money <- playHand 100
+	
+	putStrLn "Try again? (yes or no)"
+	word <- getLine
+	if word == "no"
+		then return ""
+	else do
+		playGame
+
+playHand money = do
+	putStrLn "What is your bet?"
+	bet <- getLine
+	let (valid, prompt) = validBet (read bet) money
+	let deck = fromIntegralList [2..14]
+	randNumber <- randomCard (length deck)
+
+	let (f, deck1) = getCard randNumber deck
+
+	randNumber <- randomCard (length deck1)
+	let (s, deck2) = getCard randNumber deck1
+
+	randNumber <- randomCard (length deck2)
+	let (t, deck3) = getCard randNumber deck2
+
+	let (first, second) = sortCard f s
+
+	let resultString = "First card: " ++ (cardToString first) ++ " Second card: "++ (cardToString second) ++ " Third card: "++ (cardToString t) ++ " "
+	putStrLn resultString
+
+	let (currentAmount, prompt) = checkCards first second t money (read bet)
+	putStrLn prompt
+
+	if currentAmount <= 0
+		then
+			return currentAmount
+		else do
+			money <- playHand currentAmount
+			return money
+
 intro = ["Acey Ducey Card Game",
 	    "Adapted from a BASIC game from Creative Computing - Morristown, New Jersey.",
 	    "",
@@ -17,53 +65,6 @@ intro = ["Acey Ducey Card Game",
 	    "a value between the first two.",
 	    "If you do not want to bet, input a 0."]
 
-main :: IO ()
-main = do
-    mapM_ putStrLn intro
-    res <- playGame
-    putStrLn res
-
-
-playGame = do
-	putStrLn "Try again? (yes or no)"
-	word <- getLine
-	if word == "no"
-		then return ""
-	else do
-		money <- playHand 100
-		return $ show money
-
-playHand money = do
-	putStrLn $ show money
-	putStrLn "What is your bet?"
-	bet <- getLine
-	let (valid, prompt) = validBet (read bet) money
-	putStrLn prompt
-	let deck = fromIntegralList [2..14]
-	--if valid
-	--	then 
-	--		return (read (playHand money))
-	gen <- getStdGen 
-	let (randNumber, newGen) = randomR (0, length deck) gen :: (Int, StdGen) 
-	let (f, deck1) = getCard randNumber deck
-
-	let (randNumber, newGen) = randomR (0, length deck1) gen :: (Int, StdGen) 
-	let (s, deck2) = getCard 2 deck1
-
-	let (randNumber, newGen) = randomR (0, length deck2) gen :: (Int, StdGen) 
-	let (t, deck3) = getCard 2 deck2
-
-	let resultString = " " ++ (cardToString f) ++ " "++ (cardToString s) ++ " "++ (cardToString t) ++ " "
-	putStrLn resultString
-		--else putStrLn prompt
-	let result = money - read (bet)
-	if result <= 0
-		then
-			return result
-		else do
-			money <- playHand result
-			return money
-
 
 validBet :: Int -> Int -> (Bool, [Char])
 validBet bet money 
@@ -72,11 +73,15 @@ validBet bet money
 	 	| otherwise = (True, "Go for it, dude!")
 
 
+mod' :: Int -> Int -> Int
+mod' idx d = idx `mod` (d - 1)
+
 getCard :: Int -> [Int] -> (Int, [Int])
-getCard idx deck = (deck !! idx, removeCard idx deck)
-					where removeCard i d = 
-						let (ys, zs) = splitAt i d 
-								in ys ++ tail zs
+getCard idx deck =  (deck !! idx, removeCard idx deck)
+
+removeCard :: Int -> [Int] -> [Int]
+removeCard idx deck = ys ++ tail' zs
+					where (ys, zs) = splitAt idx deck
 
 fromIntegralList :: [Integer] -> [Int]
 fromIntegralList = map (fromIntegral)
@@ -89,9 +94,25 @@ cardToString card
 	| card == 13 = "King"
 	| otherwise = "Ace"
 
+randomCard :: Int -> IO Int
+randomCard range =  getStdRandom (randomR (0, range'))
+				where range' = range - 1
+
+tail' :: [a] -> [a]
+tail' [] = []
+tail' (x:[]) = []
+tail' (x:xs) = xs
+
+sortCard :: Int -> Int -> (Int, Int)
+sortCard f s
+	| f < s = (f, s)
+	| otherwise = (s, f)
 
 
-
+checkCards :: Int -> Int -> Int -> Int -> Int -> (Int, [Char])
+checkCards f s t money bet
+	| f < t && t < s = (money + bet, "You Win! Current amount: " ++ show (money + bet))
+	| otherwise = (money - bet, "You Lose! Current amount: " ++ show (money + bet))
 
 
 
