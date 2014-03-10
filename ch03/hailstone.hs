@@ -1,3 +1,4 @@
+-- Calculate Hailstone sequence: http://en.wikipedia.org/wiki/Hailstone_sequence
 hailstone :: Integer -> [Integer]
 hailstone n
         | n <= 0    = []
