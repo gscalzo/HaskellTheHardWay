@@ -28,15 +28,17 @@ playHand money = do
 	bet <- getLine
 	let (valid, prompt) = validBet (read bet) money
 	let deck = fromIntegralList [2..14]
-	randNumber <- randomCard (length deck)
 
+
+	randNumber <- randomCard 111
 	let (f, deck1) = getCard randNumber deck
 
-	randNumber <- randomCard (length deck1)
+	randNumber <- randomCard 111
 	let (s, deck2) = getCard randNumber deck1
 
-	randNumber <- randomCard (length deck2)
+	randNumber <- randomCard 111
 	let (t, deck3) = getCard randNumber deck2
+
 
 	let (first, second) = sortCard f s
 
@@ -72,12 +74,9 @@ validBet bet money
 		| bet > money = (False, "Sorry, my friend but you have bet to much.\n" ++ "You have only " ++ show (bet) ++ " dollars to bet.")
 	 	| otherwise = (True, "Go for it, dude!")
 
-
-mod' :: Int -> Int -> Int
-mod' idx d = idx `mod` (d - 1)
-
 getCard :: Int -> [Int] -> (Int, [Int])
-getCard idx deck =  (deck !! idx, removeCard idx deck)
+getCard idx deck =  (deck !! idx', removeCard idx' deck)
+				where idx' = idx `mod` (length deck)
 
 removeCard :: Int -> [Int] -> [Int]
 removeCard idx deck = ys ++ tail' zs
