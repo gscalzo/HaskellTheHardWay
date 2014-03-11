@@ -8,4 +8,6 @@ hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
 hanoi 1 sourcePeg destPeg _ = [(sourcePeg, destPeg)]
 hanoi n sourcePeg destPeg tempPeg = hanoi (n - 1) sourcePeg tempPeg destPeg ++ [(sourcePeg, destPeg)] ++ hanoi (n - 1) tempPeg destPeg sourcePeg
 
-
+main = do
+    numOfPegs <- readLn :: IO Integer
+    print $ hanoi numOfPegs "A" "B" "C"
