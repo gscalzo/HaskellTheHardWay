@@ -17,8 +17,6 @@ hanoi' n p1 p2 p3  rest = hanoi' k p1 p3 p2 rest ++
                           hanoi' k p3 p2 p1 rest
                           where k = n `div` 2 
 
-
-
 -- hanoi for n disks and r pegs [p1, p2, ..., pr]
 hanoiR :: Integer -> [a] -> [(a, a)]
 
