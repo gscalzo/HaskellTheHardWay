@@ -30,3 +30,7 @@ build :: [LogMessage] -> MessageTree
 build [] = Leaf
 build [x] = insert x Leaf
 build (x:xs) = insert x $ build xs
+
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node left msg right) = inOrder left ++ [msg] ++ inOrder right
