@@ -14,4 +14,4 @@ parseMessage pm = case words pm of
                     xs                  -> Unknown (unwords xs)
 
 parse :: String -> [LogMessage]
-parse content = map parseMessage (lines content)
+parse content = map parseMessage $ lines content
