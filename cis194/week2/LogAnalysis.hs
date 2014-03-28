@@ -15,3 +15,18 @@ parseMessage pm = case words pm of
 
 parse :: String -> [LogMessage]
 parse content = map parseMessage $ lines content
+
+
+insert :: LogMessage -> MessageTree -> MessageTree
+insert (Unknown _) tree = tree
+insert lm@(LogMessage _ _ _) Leaf = Node Leaf lm Leaf 
+insert _ n@(Node _ (Unknown _) _) = n
+insert newlm@(LogMessage _ mts _) (Node ltree ndelm@(LogMessage _ nts _) rtree) = if mts < nts
+                                                                                        then Node (insert newlm ltree) ndelm rtree
+                                                                                        else Node ltree ndelm (insert newlm rtree)
+
+
+build :: [LogMessage] -> MessageTree
+build [] = Leaf
+build [x] = insert x Leaf
+build (x:xs) = insert x $ build xs
