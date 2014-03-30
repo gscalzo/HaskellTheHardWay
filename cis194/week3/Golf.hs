@@ -1,25 +1,18 @@
 module Golf where
 
 skips :: [a] -> [[a]]
-skips l = map skip . map (\(x,y) -> (l, y)) $ idx l  
-
-idx :: [a] -> [(a, Int)]
-idx l = l `zip` [1..]
-
-skip :: ([a] , Int) -> [a]
-skip (l,n) = [fst x | x <- idx l, (snd x) `mod` n == 0]
-
+skips l = let idx l = l `zip` [1..] in
+            let skip (l,n) = [fst x | x <- idx l, (snd x) `mod` n == 0] in
+                map skip . map (\(x,y) -> (l, y)) $ idx l  
 
 localMaxima :: [Integer] -> [Integer]
-localMaxima l = concat . map lm $ triplets l 
+localMaxima l = concat . map lm $ trp l 
+                where lm [x,y,z] = if y > x && y > z
+                                    then [y]
+                                    else []
 
-triplets :: [a] -> [[a]]
-triplets [] = []
-triplets [x] = []
-triplets [x,y] = []
-triplets (x:y:z:xs) = [[x,y,z]] ++ triplets (y:z:xs)
-
-lm :: [Integer] -> [Integer]
-lm [x,y,z] = if y > x && y > z
-            then [y]
-            else []
+trp :: [a] -> [[a]]
+trp [] = []
+trp [x] = []
+trp [x,y] = []
+trp (x:y:z:xs) = [[x,y,z]] ++ trp (y:z:xs)
