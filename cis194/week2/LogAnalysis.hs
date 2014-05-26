@@ -32,7 +32,7 @@ insert newlm (Node ltree ndelm rtree) = if timestamp newlm < timestamp ndelm
 
 build :: [LogMessage] -> MessageTree
 build [] = Leaf
-build [x] = insert x Leaf
+--build [x] = insert x Leaf
 build (x:xs) = insert x $ build xs
 
 inOrder :: MessageTree -> [LogMessage]
