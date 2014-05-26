@@ -14,3 +14,16 @@ evalStr :: String -> Maybe Integer
 evalStr x = case parseExp Lit Add Mul x of
                 Nothing -> Nothing
                 Just y  -> Just (eval y)
+
+class Expr expr where
+    lit :: Integer -> expr
+    add :: expr -> expr -> expr    
+    mul :: expr -> expr -> expr    
+
+instance Expr ExprT where
+    lit x = Lit x
+    add x y= Add x y
+    mul x y= Mul x y
+
+reify :: ExprT -> ExprT
+reify = id
